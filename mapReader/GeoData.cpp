@@ -32,17 +32,17 @@ std::tuple<int, int> GeoData::intPairToTuple(const int & fstElement, const int &
     return std::make_tuple(scndElement, fstElement);
 }
 
-std::tuple<int, int> detectSegment(const int baseNum01, const int baseNum02, const int iterateNum01, const int iterateNum02) {
+std::tuple<int, int> detectSegment(const std::tuple<int, int> & baseTuple, const std::tuple<int, int> iterateTuple) {
     switch {
-        case baseNum01 >= iterateNum01 && baseNum02 <= iterateNum02: 
+        case get<0>(baseTuple) >= get<0>(iterateTuple) && get<1>(baseTuple) <= get<1>(iterateTuple): 
             return baseVector[i-1];
             break;
 
-        case baseNum01 >= iterateNum01:
+        case get<0>(baseTuple) >= get<0>(iterateTuple):
             return GeoData::intPairToTuple(baseNum01, iterateNum02);
             break;
 
-        case baseNum02 <= iterateNum02:
+        case get<1>(baseTuple) <= get<1>(iterateTuple):
             return GeoData::intPairToTuple(iterateNum01, baseNum02);
             break;
 
@@ -55,8 +55,8 @@ std::tuple<int, int> detectSegment(const int baseNum01, const int baseNum02, con
 
 void searchOverlaps(const int i, int *changeCount, std::vector<std::tuple<int, int>> *modifiedVector,const std::vector<std::tuple<int, int>> baseVector) {
     for(auto k = (i+1); k != baseVector.end(); k++) {
-        if(detectSegment(get<0>(baseVector[i]), get<1>(baseVector[i]), get<0>(baseVector[k]), get<1>(baseVector[k])) != null) {
-            modifiedVector->push_back(detectSegment(get<0>(baseVector[i]), get<1>(baseVector[i]), get<0>(baseVector[k]), get<1>(baseVector[k])));
+        if(detectSegment(baseVector[i], baseVector[k]) != null) {
+            modifiedVector->push_back(detectSegment(baseVector[i], baseVector[k]));
             changeCount++;
         }
     }
