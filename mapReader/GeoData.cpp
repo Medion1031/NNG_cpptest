@@ -53,10 +53,10 @@ std::tuple<int, int> detectSegment(const int baseNum01, const int baseNum02, con
 }
 
 
-void searchOverlaps(const int i, int *changeCount, std::vector<std::tuple<int, int>> *modifiedVector,const std::vector<std::tuple<int, int>> *baseVector) {
-    for(auto k = i; k != baseVector.end(); k++) {
-        if(detectSegment(get<0>(baseVector[i-1]), get<1>(baseVector[i-1]), get<0>(baseVector[k]), get<1>(baseVector[k])) != null) {
-            modifiedVector->push_back(detectSegment(get<0>(baseVector[i-1]), get<1>(baseVector[i-1]), get<0>(baseVector[k]), get<1>(baseVector[k])));
+void searchOverlaps(const int i, int *changeCount, std::vector<std::tuple<int, int>> *modifiedVector,const std::vector<std::tuple<int, int>> baseVector) {
+    for(auto k = (i+1); k != baseVector.end(); k++) {
+        if(detectSegment(get<0>(baseVector[i]), get<1>(baseVector[i]), get<0>(baseVector[k]), get<1>(baseVector[k])) != null) {
+            modifiedVector->push_back(detectSegment(get<0>(baseVector[i]), get<1>(baseVector[i]), get<0>(baseVector[k]), get<1>(baseVector[k])));
             changeCount++;
         }
     }
@@ -67,7 +67,7 @@ std::vector<std::tuple<int, int>> GeoData::findOverlaps(const std::vector<std::t
     modifiedVector.clear();
     changeCount = 0;
 
-    for(auto i = 1; i != _baseVector.end()[-2]; i++) {
+    for(auto i = 0; i != _baseVector.end()[-2]; i++) {
         searchOverlaps(i, &changeCount, &modifiedVector, _baseVector);
     }
 
