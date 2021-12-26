@@ -2,21 +2,17 @@
 #define READER
 
 #include <fstream>
+#include <iostream>
+#include <vector>
 
-struct GeoData {
-    std::string name;
-    char rightScheme;
-    int rightStart;
-    int rightEnd;
-    char leftScheme;
-    int leftStart;
-    int leftEnd;
-};
+#include "GeoData.h"
 
 class Reader {
     private: 
         enum Status { NORM, ABNORM };
-        GeoData _geoData;
+        std::vector<GeoData> _geoData;
+        //collect the names to search easier for an element
+        std::vector<std::string> _geoDataNames;
         Status _currentStatus;
         std::ifstream _file;
         bool _end;
@@ -29,8 +25,7 @@ class Reader {
         void first();
         void next();
         Status checkStatus();
-        
-        GeoData current() const { return _geoData; }
+
         bool end() const { return _end; }
 };
 
