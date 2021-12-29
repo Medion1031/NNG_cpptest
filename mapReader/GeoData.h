@@ -13,6 +13,7 @@ class GeoData {
         std::vector<std::tuple<int, int>> _oddStreetNumbers;
         std::vector<std::tuple<int, int>> _evenStreetNumbers;
         std::vector<std::tuple<int, int>> modifiedVector;
+        std::vector<std::tuple<int, int>> dataHolder;
         int changeCount{};
 
     public: 
@@ -26,11 +27,12 @@ class GeoData {
         std::tuple<int, int> intPairToTuple(const int & fstElement, const int & scndElement);
         std::vector<std::tuple<int, int>> findOverlaps(const std::vector<std::tuple<int, int>> & _baseVector);
         std::tuple<int, int> detectSegment(const std::tuple<int, int> & baseTuple, const std::tuple<int, int> iterateTuple);
-        void searchOverlaps(const int i, int *changeCount, std::vector<std::tuple<int, int>> *modifiedVector,const std::vector<std::tuple<int, int>> baseVector);
-        void printData(const std::vector<std::tuple<int, int>> & data);
+        void searchOverlaps(const int i,const std::vector<std::tuple<int, int>> baseVector);
+        void printData(const std::vector<std::tuple<int, int>> & data, const std::string & str);
         
         std::string getName() const { return _name; }
         std::vector<std::tuple<int, int>> getEvenVector() const { return _evenStreetNumbers; }
+        std::vector<std::tuple<int, int>> getOddVector() const { return _oddStreetNumbers; }
 };
 
 #endif

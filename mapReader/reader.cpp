@@ -50,8 +50,9 @@ std::vector<std::string> Reader::lineSplit(const std::string & str) {
 }
 
 void Reader::createStreet(const std::string & name) {
+    GeoData gd = GeoData(name);
     _geoDataNames.push_back(name);
-    _geoData.push_back(GeoData(name));
+    _geoData.push_back(gd);
 }
 
 int Reader::searchForStreetIndex(const std::string & str) {
@@ -85,6 +86,8 @@ void Reader::processLine(const std::string & str, const int & index) {
         
 
     }
+
+
 }
 
 bool Reader::checkEmpty(const int & index, const std::string & str) {
