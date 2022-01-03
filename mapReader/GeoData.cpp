@@ -7,91 +7,142 @@ GeoData::GeoData(const std::string & name) {
     _name = name;
 }
 
-void GeoData::addOddStreetNumber(const std::tuple<int, int> & tup) {
+void GeoData::addOddStreetNumber(const Street & tup) {
     _oddStreetNumbers.push_back(tup);
 }
 
-void GeoData::addEvenStreetNumber(const std::tuple<int, int> & tup) {
+void GeoData::addEvenStreetNumber(const Street & tup) {
     _evenStreetNumbers.push_back(tup);
 }
 
-//it will make easier to add mixed data to the class
-void GeoData::addMixedStreetNumber(const std::tuple<int, int> & tup) {
+void GeoData::addMixedStreetNumber(const Street & tup) {
     GeoData::addEvenStreetNumber(tup);
     GeoData::addOddStreetNumber(tup);
 }
 
-std::tuple<int, int> GeoData::intPairToTuple(const int & fstElement, const int & scndElement) {
+Street GeoData::intPairToStreet(const int & fstElement, const int & scndElement) {
     if(fstElement < scndElement) {
-        return std::make_tuple(fstElement, scndElement);
+        return Street{fstElement, scndElement};
     }
 
-    return std::make_tuple(scndElement, fstElement);
+    return Street{scndElement, fstElement};
 }
 
-std::tuple<int, int> GeoData::detectSegment(const std::tuple<int, int> & baseTuple, const std::tuple<int, int> iterateTuple) {
+Street GeoData::detectSegment(const Street & baseStreet, const Street iterateStreet) {
 
-    int base01 = std::get<0>(baseTuple),
-        base02 = std::get<1>(baseTuple),
-        iterate01 = std::get<0>(iterateTuple),
-        iterate02 = std::get<1>(iterateTuple);
+    int baseStart = baseStreet.start,
+        baseEnd = baseStreet.end,
+        iterateStart = iterateStreet.start,
+        iterateEnd = iterateStreet.end;
 
 
-    if(base01 < iterate01 && base02 > iterate02) {
-        return iterateTuple;
+    if(baseStart <= iterateStart && baseEnd >= iterateEnd) {
+        return iterateStreet;
     }
-    else if(base01 > iterate01 && base02 < iterate02) {
-        return baseTuple;
+    if(baseStart > iterateStart && baseEnd < iterateEnd) {
+        return baseStreet;
     }
-    else if(base01 > iterate01 && base02 > iterate02 && base01 < iterate02) {
-        return GeoData::intPairToTuple(base01, iterate02);
+    if(baseStart < iterateStart && baseEnd <= iterateEnd && baseEnd >= iterateStart) {
+        return intPairToStreet(baseEnd, iterateStart);
     }
-    else if(base01 < iterate01 && base02 < iterate02 && base01 > iterate02) {
-        return GeoData::intPairToTuple(iterate01, base02);
+    if(baseStart > iterateStart && baseEnd > iterateEnd && baseStart < iterateEnd) {
+        return intPairToStreet(baseStart, iterateEnd);
     }
-    else if(base01 == iterate01 && base02 == iterate02) {
-        return baseTuple;
+    if(baseStart < iterateStart && baseEnd == iterateStart && baseEnd < iterateEnd) {
+        return intPairToStreet(baseEnd, iterateStart);
+    }
+    if(baseStart == iterateStart && baseEnd == iterateStart && baseEnd < iterateEnd) {
+        return intPairToStreet(baseEnd, iterateStart);
+    }
+    if(baseStart < iterateStart && baseEnd == iterateEnd && baseEnd == iterateStart) {
+        return intPairToStreet(baseEnd, iterateStart);
+    }
+    if(baseStart == iterateEnd && baseEnd > iterateEnd) {
+        return intPairToStreet(baseStart, iterateEnd);
+    }
+    if(baseStart == iterateEnd && baseStart == iterateStart && baseEnd > iterateEnd) {
+        return intPairToStreet(baseStart, iterateEnd);
+    }
+    if(baseStart == iterateStart && baseEnd == iterateStart && baseEnd < iterateEnd) {
+        return intPairToStreet(baseEnd, iterateStart);
     }
 
-    return GeoData::intPairToTuple(-1, -1);
+    return Street{-1,-1};
 
 }
 
+bool operator==(const Street& lhs, const Street& rhs){
+    return (lhs.start == rhs.start && lhs.end == rhs.end);
+}
+bool operator!=(const Street& lhs, const Street& rhs){
+    return !(lhs.start == rhs.start && lhs.end == rhs.end);
+}
 
-void GeoData::searchOverlaps(const int i,const std::vector<std::tuple<int, int>> baseVector) {
+void GeoData::searchOverlaps(const int i,const std::vector<Street> baseVector) {
     for(auto k = (i+1); k != baseVector.size(); k++) {
-        auto currentTuple = detectSegment(baseVector[i], baseVector[k]);
-        auto foundTuple = std::find(modifiedVector.begin(), modifiedVector.end(), currentTuple);
-        
-        if(currentTuple != std::make_tuple(-1,-1) && foundTuple == modifiedVector.end()) {
-            modifiedVector.push_back(currentTuple);
-            changeCount++;
+        auto currentStreet = detectSegment(baseVector[i], baseVector[k]);
+        auto foundStreet = std::find(modifiedVector.begin(), modifiedVector.end(), currentStreet);
+
+        if(currentStreet != Street{-1,-1} && foundStreet == modifiedVector.end()) {
+            modifiedVector.push_back(currentStreet);
         }
     }
 }
 
-//i know i pass way more parameter than it would be elegant but i didn't wanted nested for loops.
-std::vector<std::tuple<int, int>> GeoData::findOverlaps(const std::vector<std::tuple<int, int>> & _baseVector) {
+void GeoData::connectPairs() {
+    for(int j = 0; j < modifiedVector.size(); j++) {
+        if(compressedData.start <= modifiedVector[j].start && compressedData.end >= modifiedVector[j].end) {
+            modifiedVector.erase(modifiedVector.begin() + j);
+            j--;
+        }
+        else if(compressedData.start > modifiedVector[j].start && compressedData.end < modifiedVector[j].end) {
+            compressedData = Street{modifiedVector[j].start, modifiedVector[j].end};
+            modifiedVector.erase(modifiedVector.begin() + j);
+            j--;
+        }
+        else if(compressedData.start <= modifiedVector[j].start && compressedData.end >= modifiedVector[j].start) {
+            compressedData = Street{compressedData.start, modifiedVector[j].end};
+            modifiedVector.erase(modifiedVector.begin() + j);
+            j--;
+        }
+        else if(modifiedVector[j].start <= compressedData.start & modifiedVector[j].end >= compressedData.start) {
+            compressedData = Street{modifiedVector[j].start, compressedData.end};
+            modifiedVector.erase(modifiedVector.begin() + j);
+            j--;
+        }
+    }
+}
+
+void GeoData::simplify() {
+    dataHolder.clear();
+
+    while(modifiedVector.size() != 0) {
+        compressedData = modifiedVector[0];
+        modifiedVector.erase(modifiedVector.begin());
+
+        connectPairs();
+
+        dataHolder.push_back(compressedData);
+    }
+    modifiedVector = dataHolder;
+}
+
+std::vector<Street> GeoData::findOverlaps(const std::vector<Street> & _baseVector) {
     modifiedVector.clear();
-    changeCount = 0;
 
     for(auto i = 0; i != _baseVector.size()-1; i++) {
         searchOverlaps(i, _baseVector);
     }
 
-    dataHolder = modifiedVector;
+    simplify();
 
-    if(changeCount > 0 && modifiedVector.size() > 1) {
-        return GeoData::findOverlaps(dataHolder);
-    }
-
-    return dataHolder;
+    return modifiedVector;
 }
 
-void GeoData::printData(const std::vector<std::tuple<int, int>> & data, const std::string & str) {
+void GeoData::printData(const std::vector<Street> & data, const std::string & str) {
     std::cout << str;
-    for(std::tuple<int, int> d : data) {
-        std::cout << std::get<0>(d) << "-" << std::get<1>(d) << ", ";
+    for(Street d : data) {
+        std::cout << d.start << "-" << d.end << ", ";
     }
     std::cout << "\n\n";
 }

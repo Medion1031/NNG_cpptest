@@ -3,36 +3,47 @@
 
 #include <iostream>
 #include <vector>
-#include<tuple>
 #include<string> 
+#include <list>
+
+struct Street {
+    int start;
+    int end;
+};
+
+
 
 class GeoData {
     private: 
         //STREET_NAME + STREET_TYPE
         std::string _name;
-        std::vector<std::tuple<int, int>> _oddStreetNumbers;
-        std::vector<std::tuple<int, int>> _evenStreetNumbers;
-        std::vector<std::tuple<int, int>> modifiedVector;
-        std::vector<std::tuple<int, int>> dataHolder;
+        std::vector<Street> _oddStreetNumbers;
+        std::vector<Street> _evenStreetNumbers;
+        std::vector<Street> modifiedVector;
+        std::vector<Street> dataHolder;
+        Street compressedData;
         int changeCount{};
+        
+        Street intPairToStreet(const int & fstElement, const int & scndElement);
+        Street detectSegment(const Street & baseStreet, const Street iterateStreet);
+        void searchOverlaps(const int i,const std::vector<Street> baseVector);
+        void simplify();
+        void connectPairs();
 
     public: 
         enum Error { EMPTY_NAME };
         GeoData(const std::string & name);
 
-        void addOddStreetNumber(const std::tuple<int, int> & tup);
-        void addEvenStreetNumber(const std::tuple<int, int> & tup);
-        void addMixedStreetNumber(const std::tuple<int, int> & tup);
+        void addOddStreetNumber(const Street & tup);
+        void addEvenStreetNumber(const Street & tup);
+        void addMixedStreetNumber(const Street & tup);
 
-        std::tuple<int, int> intPairToTuple(const int & fstElement, const int & scndElement);
-        std::vector<std::tuple<int, int>> findOverlaps(const std::vector<std::tuple<int, int>> & _baseVector);
-        std::tuple<int, int> detectSegment(const std::tuple<int, int> & baseTuple, const std::tuple<int, int> iterateTuple);
-        void searchOverlaps(const int i,const std::vector<std::tuple<int, int>> baseVector);
-        void printData(const std::vector<std::tuple<int, int>> & data, const std::string & str);
+        void printData(const std::vector<Street> & data, const std::string & str);
+        std::vector<Street> findOverlaps(const std::vector<Street> & _baseVector);
         
         std::string getName() const { return _name; }
-        std::vector<std::tuple<int, int>> getEvenVector() const { return _evenStreetNumbers; }
-        std::vector<std::tuple<int, int>> getOddVector() const { return _oddStreetNumbers; }
+        std::vector<Street> getEvenVector() const { return _evenStreetNumbers; }
+        std::vector<Street> getOddVector() const { return _oddStreetNumbers; }
 };
 
 #endif

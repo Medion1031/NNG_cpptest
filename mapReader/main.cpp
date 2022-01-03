@@ -4,15 +4,15 @@
 
 #include "reader.cpp"
 
-bool checker(const std::vector<std::tuple<int, int>> & vector, GeoData gd) {
+bool checker(const std::vector<Street> & vector, GeoData gd) {
     if(vector.size() > 1 && gd.findOverlaps(vector).size() > 0) {
-        
         return true;
     }
+
     return false;
 }
 
-void checkVector(const std::string & type, const std::vector<std::tuple<int, int>> & vector, GeoData gd) {
+void checkVector(const std::string & type, const std::vector<Street> & vector, GeoData gd) {
     if(checker(vector, gd)) {
         gd.printData(gd.findOverlaps(vector), type);
     }

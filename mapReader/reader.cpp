@@ -24,12 +24,12 @@ Reader::Status Reader::checkStatus() {
     return NORM;
 }
 
-std::tuple<int, int> Reader::intPairToTuple(const int & fstElement, const int & scndElement) {
+Street Reader::intPairToTuple(const int & fstElement, const int & scndElement) {
     if(fstElement < scndElement) {
-        return std::make_tuple(fstElement, scndElement);
+        return Street{fstElement, scndElement};
     }
 
-    return std::make_tuple(scndElement, fstElement);
+    return Street{scndElement, fstElement};
 }
 
 std::vector<std::string> Reader::lineSplit(const std::string & str) {
@@ -83,8 +83,6 @@ void Reader::processLine(const std::string & str, const int & index) {
         case 'M' :
             _geoData[indexOfStreet].addMixedStreetNumber(currentTuple);
             break;
-        
-
     }
 
 
