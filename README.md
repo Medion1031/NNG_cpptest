@@ -41,8 +41,9 @@ A projektben 5 file található
     }
 }
  ~~~
- Ezután a `start()` ellenőrzi, hogy üres-e a file, ha nem akkor beolvassa az első sort a `next()` metódussal, ezt fogjuk alkalmazni az egész file beolvasására. A `next()` futása közben az `end()` fügvény adja vissza, hogy vannak e még sorok a fileban, viszont ezt a `checkStatus()`˙ellenőrzi. Miközben végigfut a fileon a megfelelő helyre berakja a páros és páratlan házszámokat, ha nincs még az adott utcának reprezentatívája akkor létrehoz egyet, ebben a folyamatban a `searchForStreetIndex()`, `processLine()`, `createStreet()`, `lineSplit()`,` checkEmpty()`, `intPairToStreet()` illetve `checkRoadsAreEmpty()` segítenek. 
- <br>Van a fileban viszont 3 olyan függvény ami más alkalmazási formában nem ide kerülne, ezek a `checkElementIfTrue()`, `printVectorIfTrue()`, és `processData`. Ezek a lefutás után az adatok feldolgozásáért illetve kiiratásáért felelősek (pontosabban a `GeoData` függvényeivel ellenőrzik az adatot illetve dolgoznak vele).
+ Ezután a `start()` ellenőrzi, hogy üres-e a file, ha nem akkor beolvassa az első sort a `next()` metódussal, ezt fogjuk alkalmazni az egész file beolvasására. A `next()` futása közben az `end()` fügvény adja vissza, hogy vannak e még sorok a fileban, viszont ezt a `checkStatus()`˙ellenőrzi. Miközben végigfut a fileon a megfelelő helyre berakja a páros és páratlan házszámokat, ha nincs még az adott utcának reprezentatívája akkor létrehoz egyet, ebben a folyamatban a `searchForStreetIndex()`, `processLine()`, `createStreet()`, `lineSplit()`,` checkEmpty()`, `intPairToStreet()` illetve `checkRoadsAreEmpty()` segítenek. <br> 
+ Egy sor feldolgozásánál csak specifikus adattagokat veszek ki soronként a feladata leírása miatt.
+ <br>Van a fileban viszont 3 olyan függvény ami más alkalmazási formában nem ide kerülne, ezek a `checkElementIfTrue()`, `printVectorIfTrue()`, és `processData`. Ezek a lefutás után az adatok feldolgozásáért illetve kiiratásáért felelősek (pontosabban a `GeoData` függvényeivel ellenőrzik az adatot illetve dolgoznak vele). 
  ### geodata.cpp illetve geodata.h
   Először is ami a legfontosabb ebben a fileban van az összes `include` mivel ez van a legvégén a csőrendszernek, illetve itt van az a `structom` is amely az egész programon végig reprezentálva van.
  ~~~cpp
