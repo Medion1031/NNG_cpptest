@@ -24,7 +24,7 @@ Reader::Status Reader::checkStatus() {
     return NORM;
 }
 
-Street Reader::intPairToTuple(const int & fstElement, const int & scndElement) {
+Street Reader::intPairToStreet(const int & fstElement, const int & scndElement) {
     if(fstElement < scndElement) {
         return Street{fstElement, scndElement};
     }
@@ -70,18 +70,18 @@ int Reader::searchForStreetIndex(const std::string & str) {
 
 void Reader::processLine(const std::string & str, const int & index) {
     int indexOfStreet = searchForStreetIndex(str);
-    auto currentTuple = Reader::intPairToTuple(std::stoi(lineSplit(str)[index+1]), std::stoi(lineSplit(str)[index+2]));
+    Street currentStreet = Reader::intPairToStreet(std::stoi(lineSplit(str)[index+1]), std::stoi(lineSplit(str)[index+2]));
     std::string splittedChar = lineSplit(str)[index];
 
     switch (splittedChar[0]) {
         case 'O' :
-            _geoData[indexOfStreet].addOddStreetNumber(currentTuple);
+            _geoData[indexOfStreet].addOddStreetNumber(currentStreet);
             break;
         case 'E' :
-            _geoData[indexOfStreet].addEvenStreetNumber(currentTuple);
+            _geoData[indexOfStreet].addEvenStreetNumber(currentStreet);
             break;
         case 'M' :
-            _geoData[indexOfStreet].addMixedStreetNumber(currentTuple);
+            _geoData[indexOfStreet].addMixedStreetNumber(currentStreet);
             break;
     }
 
@@ -104,8 +104,37 @@ void Reader::next() {
     _currentStatus = checkStatus();
     _end = _currentStatus == ABNORM;
     iterator++;
+
     if(!_end && checkEmpty(16, currentLine) && checkEmpty(17, currentLine)) {
         checkRoadsAreEmpty(currentLine, 20);
         checkRoadsAreEmpty(currentLine, 23);
+    }
+}
+
+bool Reader::checkElementIfTrue(const std::vector<Street> & vector, GeoData gd) {
+    if(vector.size() > 1 && gd.overlaps(vector).size() > 0) {
+        return true;
+    }
+
+    return false;
+}
+
+void Reader::printVectorIfTrue(const std::string & type, const std::vector<Street> & vector, GeoData gd) {
+    if(checkElementIfTrue(vector, gd)) {
+        gd.printData(gd.overlaps(vector), type);
+    }
+}
+
+void Reader::processData(const std::vector<GeoData> & geoData) {
+    for(GeoData gd : geoData) {
+        std::vector<Street> evenVector = gd.getEvenVector();
+        std::vector<Street> oddVector = gd.getOddVector();
+
+        if(checkElementIfTrue(evenVector, gd) || checkElementIfTrue(oddVector, gd)) {
+            std::cout << gd.getName() << "\n";
+        }
+
+        printVectorIfTrue("E: ", evenVector, gd);
+        printVectorIfTrue("O: ", oddVector, gd);
     }
 }

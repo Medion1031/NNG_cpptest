@@ -1,13 +1,6 @@
 #ifndef READER
 #define READER
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include<tuple>
-#include<bits/stdc++.h>
-
 #include "GeoData.cpp"
 
 class Reader {
@@ -29,7 +22,7 @@ class Reader {
         void processLine(const std::string & str, const int & index);
         std::vector<std::string> lineSplit(const std::string & str);
         bool checkEmpty(const int & index, const std::string & str);
-        Street intPairToTuple(const int & fstElement, const int & scndElement);
+        Street intPairToStreet(const int & fstElement, const int & scndElement);
         void checkRoadsAreEmpty(const std::string & str, const int & index);
 
     public:
@@ -39,10 +32,12 @@ class Reader {
 
         void read();
         void next();
+        bool end() const { return _end; }
         
         std::vector<GeoData> getGeoData() const { return _geoData; }
-
-        bool end() const { return _end; }
+        bool checkElementIfTrue(const std::vector<Street> & vector, GeoData gd);
+        void printVectorIfTrue(const std::string & type, const std::vector<Street> & vector, GeoData gd);
+        void processData(const std::vector<GeoData> & geoData);
 };
 
 #endif //READER

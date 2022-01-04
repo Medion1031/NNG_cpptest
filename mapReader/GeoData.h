@@ -2,16 +2,23 @@
 #define GEODATA
 
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <vector>
-#include<string> 
-#include <list>
+#include<tuple>
+#include<bits/stdc++.h>
 
 struct Street {
     int start;
     int end;
 };
 
-
+bool operator==(const Street& lhs, const Street& rhs){
+    return (lhs.start == rhs.start && lhs.end == rhs.end);
+}
+bool operator!=(const Street& lhs, const Street& rhs){
+    return !(lhs.start == rhs.start && lhs.end == rhs.end);
+}
 
 class GeoData {
     private: 
@@ -26,9 +33,11 @@ class GeoData {
         
         Street intPairToStreet(const int & fstElement, const int & scndElement);
         Street detectSegment(const Street & baseStreet, const Street iterateStreet);
+        Street checkSegment(const Street & baseStreet, const Street iterateStreet);
         void searchOverlaps(const int i,const std::vector<Street> baseVector);
         void simplify();
         void connectPairs();
+
 
     public: 
         enum Error { EMPTY_NAME };
@@ -39,7 +48,7 @@ class GeoData {
         void addMixedStreetNumber(const Street & tup);
 
         void printData(const std::vector<Street> & data, const std::string & str);
-        std::vector<Street> findOverlaps(const std::vector<Street> & _baseVector);
+        std::vector<Street> overlaps(const std::vector<Street> & _baseVector);
         
         std::string getName() const { return _name; }
         std::vector<Street> getEvenVector() const { return _evenStreetNumbers; }

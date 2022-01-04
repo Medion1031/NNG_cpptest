@@ -28,13 +28,11 @@ Street GeoData::intPairToStreet(const int & fstElement, const int & scndElement)
     return Street{scndElement, fstElement};
 }
 
-Street GeoData::detectSegment(const Street & baseStreet, const Street iterateStreet) {
-
+Street GeoData::checkSegment(const Street & baseStreet, const Street iterateStreet) {
     int baseStart = baseStreet.start,
         baseEnd = baseStreet.end,
         iterateStart = iterateStreet.start,
         iterateEnd = iterateStreet.end;
-
 
     if(baseStart <= iterateStart && baseEnd >= iterateEnd) {
         return iterateStreet;
@@ -42,40 +40,21 @@ Street GeoData::detectSegment(const Street & baseStreet, const Street iterateStr
     if(baseStart > iterateStart && baseEnd < iterateEnd) {
         return baseStreet;
     }
-    if(baseStart < iterateStart && baseEnd <= iterateEnd && baseEnd >= iterateStart) {
-        return intPairToStreet(baseEnd, iterateStart);
+    if(baseEnd >= iterateStart && baseStart <= iterateStart) {
+        return Street{iterateStart, baseEnd};
     }
-    if(baseStart > iterateStart && baseEnd > iterateEnd && baseStart < iterateEnd) {
-        return intPairToStreet(baseStart, iterateEnd);
-    }
-    if(baseStart < iterateStart && baseEnd == iterateStart && baseEnd < iterateEnd) {
-        return intPairToStreet(baseEnd, iterateStart);
-    }
-    if(baseStart == iterateStart && baseEnd == iterateStart && baseEnd < iterateEnd) {
-        return intPairToStreet(baseEnd, iterateStart);
-    }
-    if(baseStart < iterateStart && baseEnd == iterateEnd && baseEnd == iterateStart) {
-        return intPairToStreet(baseEnd, iterateStart);
-    }
-    if(baseStart == iterateEnd && baseEnd > iterateEnd) {
-        return intPairToStreet(baseStart, iterateEnd);
-    }
-    if(baseStart == iterateEnd && baseStart == iterateStart && baseEnd > iterateEnd) {
-        return intPairToStreet(baseStart, iterateEnd);
-    }
-    if(baseStart == iterateStart && baseEnd == iterateStart && baseEnd < iterateEnd) {
-        return intPairToStreet(baseEnd, iterateStart);
+
+    return Street{baseStart, iterateEnd};
+}
+
+Street GeoData::detectSegment(const Street & baseStreet, const Street iterateStreet) {
+
+    if(!(baseStreet.end < iterateStreet.start || baseStreet.start > iterateStreet.end)) {
+        return checkSegment(baseStreet, iterateStreet);
     }
 
     return Street{-1,-1};
 
-}
-
-bool operator==(const Street& lhs, const Street& rhs){
-    return (lhs.start == rhs.start && lhs.end == rhs.end);
-}
-bool operator!=(const Street& lhs, const Street& rhs){
-    return !(lhs.start == rhs.start && lhs.end == rhs.end);
 }
 
 void GeoData::searchOverlaps(const int i,const std::vector<Street> baseVector) {
@@ -127,7 +106,7 @@ void GeoData::simplify() {
     modifiedVector = dataHolder;
 }
 
-std::vector<Street> GeoData::findOverlaps(const std::vector<Street> & _baseVector) {
+std::vector<Street> GeoData::overlaps(const std::vector<Street> & _baseVector) {
     modifiedVector.clear();
 
     for(auto i = 0; i != _baseVector.size()-1; i++) {
